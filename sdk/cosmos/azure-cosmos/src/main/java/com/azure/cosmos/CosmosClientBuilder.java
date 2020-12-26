@@ -104,7 +104,7 @@ public class CosmosClientBuilder {
     private boolean endpointDiscoveryEnabled = true;
     private boolean multipleWriteRegionsEnabled = true;
     private boolean readRequestsFallbackEnabled = true;
-    private boolean clientTelemetryEnabled = false;
+    private boolean clientTelemetryEnabled = true;
 
     /**
      * Instantiates a new Cosmos client builder.

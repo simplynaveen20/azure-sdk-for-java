@@ -17,7 +17,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.codec.http.HttpMethod;
 import org.HdrHistogram.ConcurrentDoubleHistogram;
-import org.HdrHistogram.DoubleHistogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -99,7 +98,7 @@ public class ClientTelemetry {
         return clientTelemetryInfo;
     }
 
-    public static void recordValue(DoubleHistogram doubleHistogram, long value) {
+    public static void recordValue(ConcurrentDoubleHistogram doubleHistogram, long value) {
         try {
             doubleHistogram.recordValue(value);
         } catch (Exception ex) {
@@ -107,7 +106,7 @@ public class ClientTelemetry {
         }
     }
 
-    public static void recordValue(DoubleHistogram doubleHistogram, double value) {
+    public static void recordValue(ConcurrentDoubleHistogram doubleHistogram, double value) {
         try {
             doubleHistogram.recordValue(value);
         } catch (Exception ex) {
@@ -202,7 +201,7 @@ public class ClientTelemetry {
     private void clearDataForNextRun() {
         this.clientTelemetryInfo.getOperationInfoMap().clear();
         this.clientTelemetryInfo.getCacheRefreshInfoMap().clear();
-        for (DoubleHistogram histogram : this.clientTelemetryInfo.getSystemInfoMap().values()) {
+        for (ConcurrentDoubleHistogram histogram : this.clientTelemetryInfo.getSystemInfoMap().values()) {
             histogram.reset();
         }
     }

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.handler.codec.http.HttpMethod;
 import org.HdrHistogram.ConcurrentDoubleHistogram;
+import org.HdrHistogram.DoubleHistogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -243,16 +244,17 @@ public class ClientTelemetry {
     }
 
     private void fillMetricsInfo(ReportPayload payload, ConcurrentDoubleHistogram histogram) {
-        payload.getMetricInfo().setCount(histogram.getTotalCount());
-        payload.getMetricInfo().setMax(histogram.getMaxValue());
-        payload.getMetricInfo().setMin(histogram.getMinValue());
-        payload.getMetricInfo().setMean(histogram.getMean());
+        DoubleHistogram copyHistogram = histogram.copy();
+        payload.getMetricInfo().setCount(copyHistogram.getTotalCount());
+        payload.getMetricInfo().setMax(copyHistogram.getMaxValue());
+        payload.getMetricInfo().setMin(copyHistogram.getMinValue());
+        payload.getMetricInfo().setMean(copyHistogram.getMean());
         Map<Double, Double> percentile = new HashMap<>();
-        percentile.put(PERCENTILE_50, histogram.getValueAtPercentile(PERCENTILE_50));
-        percentile.put(PERCENTILE_90, histogram.getValueAtPercentile(PERCENTILE_90));
-        percentile.put(PERCENTILE_95, histogram.getValueAtPercentile(PERCENTILE_95));
-        percentile.put(PERCENTILE_99, histogram.getValueAtPercentile(PERCENTILE_99));
-        percentile.put(PERCENTILE_999, histogram.getValueAtPercentile(PERCENTILE_999));
+        percentile.put(PERCENTILE_50, copyHistogram.getValueAtPercentile(PERCENTILE_50));
+        percentile.put(PERCENTILE_90, copyHistogram.getValueAtPercentile(PERCENTILE_90));
+        percentile.put(PERCENTILE_95, copyHistogram.getValueAtPercentile(PERCENTILE_95));
+        percentile.put(PERCENTILE_99, copyHistogram.getValueAtPercentile(PERCENTILE_99));
+        percentile.put(PERCENTILE_999, copyHistogram.getValueAtPercentile(PERCENTILE_999));
         payload.getMetricInfo().setPercentiles(percentile);
     }
 

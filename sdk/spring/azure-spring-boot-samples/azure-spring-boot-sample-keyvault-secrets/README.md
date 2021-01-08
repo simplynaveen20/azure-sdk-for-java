@@ -6,7 +6,12 @@ This sample illustrates how to use [Azure Spring Boot Starter Key Vault Secrets 
 In this sample, a secret named `spring-datasource-url` is stored into an Azure Key Vault, and a sample Spring application will use its value as a configuration property value.
 
 ## Getting started
-First, we need to store secret `spring-datasource-url` into Azure Key Vault.
+
+### Environment checklist
+We need to ensure that this [environment checklist][ready-to-run-checklist] is completed before the run.
+
+### Store Secret
+We need to store secret `spring-datasource-url` into Azure Key Vault.
 
 - Create one azure service principal by using Azure CLI or via [Azure Portal](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal). Save your service principal id and password for later use.
 You can use the following az cli commands to create a service principal:
@@ -51,11 +56,25 @@ az keyvault secret set --name <yourSecretPropertyName>   \
                        --vault-name <your_keyvault_name>
 ```
 
+- If you want to use certificate authentication, upload the certificate file to App registrations in Azure Active Directory by using Azure Portal. 
+You can manually add a new application or use the service principal created in the previous step.
 
+    1. Select **App registrations**, then select the application name or service principal name just created.
+    
+    1. Select **Certificates & secrets**, then select **Upload Certificate**, upload your cer, pem, or crt type certificate, click **Add** button to complete the upload.
+    
+    1. If you add a new application, grant appropriate permissions to the application created.
+       
+       You can use the following az cli commands:
+       ```bash
+       az keyvault set-policy --name <your_keyvault_name>   \
+                              --secret-permission get list  \
+                              --spn <your_application_id_create_in_current_step>
+       ```
 ## Examples
 
-### Add the property setting
-Open `application.properties` file and add below properties to specify your Azure Key Vault url, Azure service principle client id and client key.
+### The service-principal-based authentication property setting
+Open `application.properties` file and add below properties to specify your Azure Key Vault url, Azure service principal client id and client key.
 
 ```properties
 azure.keyvault.uri=put-your-azure-keyvault-uri-here
@@ -84,11 +103,20 @@ The valid secret-service-version value can be found [here][version_link].
 
 If property not set, the property will be filled with the latest value.
 
-## Run with Maven
-First, we need to ensure that this [instruction] is completed before run.
+### The certificate-based authentication property setting
+If you use certificate authentication, you only need to replace the property `azure.keyvault.client-key` with `azure.keyvault.certificate-path`, which points to your certificate.
+
+```properties
+azure.keyvault.uri=put-your-azure-keyvault-uri-here
+azure.keyvault.client-id=put-your-azure-client-id-here
+azure.keyvault.certificate-path=put-your-certificate-file-path-here
+azure.keyvault.tenant-id=put-your-azure-tenant-id-here
+azure.keyvault.authority-host=put-your-own-authority-host-here(fill with default value if empty)
+azure.keyvault.secret-service-version=specify secretServiceVersion value(fill with default value if empty)
 ```
-# Under sdk/spring project root directory
-mvn clean install -DskipTests
+
+## Run with Maven
+```
 cd azure-spring-boot-samples/azure-spring-boot-sample-keyvault-secrets
 mvn spring-boot:run
 ```
@@ -100,4 +128,4 @@ mvn spring-boot:run
 
 <!-- links -->
 [version_link]: https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/keyvault/azure-security-keyvault-secrets/src/main/java/com/azure/security/keyvault/secrets/SecretServiceVersion.java#L12
-[instruction]: https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/spring/CONTRIBUTING.md#building-from-source
+[ready-to-run-checklist]: https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/spring/azure-spring-boot-samples/README.md#ready-to-run-checklist

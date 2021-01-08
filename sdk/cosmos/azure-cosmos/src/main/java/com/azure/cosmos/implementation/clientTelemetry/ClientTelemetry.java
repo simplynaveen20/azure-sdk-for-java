@@ -61,10 +61,9 @@ public class ClientTelemetry {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private ClientTelemetryInfo clientTelemetryInfo;
     private HttpClient httpClient;
-    private final ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(1,
-        new DaemonThreadFactory());
+    private final ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(1, new DaemonThreadFactory());
     private final Scheduler scheduler = Schedulers.fromExecutor(scheduledExecutorService);
-    private static final Logger logger = LoggerFactory.getLogger(ClientTelemetry.class);
+    private static final Logger logger = LoggerFactory.getLogger(GlobalEndpointManager.class);
     private volatile boolean isClosed;
     private volatile boolean isClientTelemetryEnabled;
     private static String AZURE_VM_METADATA = "http://169.254.169.254:80/metadata/instance?api-version=2020-06-01";
